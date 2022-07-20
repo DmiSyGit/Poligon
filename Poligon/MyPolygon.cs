@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Poligon
 {
     class Point
     {
-        public double X;
-        public double Y;
+        public double X { get; set; }
+        public double Y { get; set; }
 
         public Point()
         {
@@ -21,51 +19,51 @@ namespace Poligon
     class MyPolygon
     {
         public int[,] points; // массив с координатами
-        int points_count; // количество точек многоугольника
+        int pointsCount; // количество точек многоугольника
 
         public MyPolygon() // пустой конструктор
         {
-            points_count = 0;
-            points = new int[points_count, 2];
+            pointsCount = 0;
+            points = new int[pointsCount, 2];
         }
-        public MyPolygon(int points_count) // конструктор с параметрами
+        public MyPolygon(int pointsCount) // конструктор с параметрами
         {
-            this.points_count = points_count;
-            points = new int[points_count + 1, 2];
+            this.pointsCount = pointsCount;
+            points = new int[pointsCount + 1, 2];
         }
         public void Filling() // заполнение массива координатами
         {
-            for (int i = 0; i < points_count; i++)
+            for (int i = 0; i < pointsCount; i++)
             {
                 Console.Write("Введите x{0}: ", i + 1);
                 points[i, 0] = Convert.ToInt32(Console.ReadLine());
                 Console.Write("Введите y{0}: ", i + 1);
                 points[i, 1] = Convert.ToInt32(Console.ReadLine());
             }
-            points[points_count, 0] = points[0, 0];
-            points[points_count, 1] = points[0, 1];
+            points[pointsCount, 0] = points[0, 0];
+            points[pointsCount, 1] = points[0, 1];
         }
         public void Points_Output() // вывод координат всех точек
         {
             Console.WriteLine("x  y");
-            for (int i = 0; i < points_count; i++)
+            for (int i = 0; i < pointsCount; i++)
             {
                 Console.WriteLine(points[i, 0] + "; " + points[i, 1]);
             }
         }
         public int Square() // площадь
         {
-            int oblique_l_r = 0;
-            int oblique_r_l = 0;
-            for (int i = 0; i < points_count; i++)
+            int obliqueLR = 0;
+            int obliqueRL = 0;
+            for (int i = 0; i < pointsCount; i++)
             {
-                oblique_l_r += points[i, 0] * points[i + 1, 1];
+                obliqueLR += points[i, 0] * points[i + 1, 1];
             }
-            for (int i = 0; i < points_count; i++)
+            for (int i = 0; i < pointsCount; i++)
             {
-                oblique_r_l += points[i, 1] * points[i + 1, 0];
+                obliqueRL += points[i, 1] * points[i + 1, 0];
             }
-            return (oblique_r_l - oblique_l_r) / 2;
+            return (obliqueRL - obliqueLR) / 2;
         }
 
         static public double[] Intersection(Point pABDot1, Point pABDot2, Point pCDDot1, Point pCDDot2) // пересечение двух линий
@@ -102,19 +100,19 @@ namespace Poligon
             switch (sign)
             {
                 case 'm':
-                    int Max = points[0, 0];
-                    for (int i = 1; i < points_count; i++)
+                    int max = points[0, 0];
+                    for (int i = 1; i < pointsCount; i++)
                     {
-                        if (points[i, 0] > Max) Max = points[i, 0];
+                        if (points[i, 0] > max) max = points[i, 0];
                     }
-                    return Max;
+                    return max;
                 default:
-                    int Min = points[0, 0];
-                    for (int i = 1; i < points_count; i++)
+                    int min = points[0, 0];
+                    for (int i = 1; i < pointsCount; i++)
                     {
-                        if (points[i, 0] < Min) Min = points[i, 0];
+                        if (points[i, 0] < min) min = points[i, 0];
                     }
-                    return Min;
+                    return min;
             }
         }
         int MaxMin_Y(char sign) // Мин и Макс Y
@@ -122,19 +120,19 @@ namespace Poligon
             switch (sign)
             {
                 case 'm':
-                    int Max = points[0, 1];
-                    for (int i = 1; i < points_count; i++)
+                    int max = points[0, 1];
+                    for (int i = 1; i < pointsCount; i++)
                     {
-                        if (points[i, 1] > Max) Max = points[i, 1];
+                        if (points[i, 1] > max) max = points[i, 1];
                     }
-                    return Max;
+                    return max;
                 default:
-                    int Min = points[0, 1];
-                    for (int i = 1; i < points_count; i++)
+                    int min = points[0, 1];
+                    for (int i = 1; i < pointsCount; i++)
                     {
-                        if (points[i, 1] < Min) Min = points[i, 1];
+                        if (points[i, 1] < min) min = points[i, 1];
                     }
-                    return Min;
+                    return min;
             }
         }
         public bool IsBelonging(int X, int Y) // входит ли точка
@@ -142,7 +140,7 @@ namespace Poligon
             double intersections = 0;
             Point pCDDot1 = new Point(X, Y);
             Point pCDDot2;
-            int count_nechet = 0, count_chet = 0;
+            int countUneven = 0, countEven = 0; // нечетный, четный
             for (int j = 0; j < 8; j++)
             {
                 intersections = 0;
@@ -183,22 +181,22 @@ namespace Poligon
                     if (a[0] == 1 && ((a[1] == pABDot1.X && a[2] == pABDot1.Y) || (a[1] == pABDot2.X && a[2] == pABDot2.Y))) intersections += 0.5;
                     else if (a[0] == 1) intersections++;
                 }
-                if (intersections % 2 == 1) count_nechet++;
-                else if (intersections % 2 == 0) count_chet++;
+                if (intersections % 2 == 1) countUneven++;
+                else if (intersections % 2 == 0) countEven++;
             }
-            if (count_nechet > count_chet) return true;
+            if (countUneven > countEven) return true;
             else return false;
         }
         public bool IsConvex() // выпуклый/нет
         {
-            MyPolygon polygon = new MyPolygon(points_count + 1);
-            for (int j = 0; j < points_count + 1; j++)
+            MyPolygon polygon = new MyPolygon(pointsCount + 1);
+            for (int j = 0; j < pointsCount + 1; j++)
             {
                 polygon.points[j, 0] = points[j, 0];
                 polygon.points[j, 1] = points[j, 1];
             }
-            polygon.points[points_count + 1, 0] = points[1, 0];
-            polygon.points[points_count + 1, 1] = points[1, 1];
+            polygon.points[pointsCount + 1, 0] = points[1, 0];
+            polygon.points[pointsCount + 1, 1] = points[1, 1];
 
             double sum = 0;
             for (int i = 0; i < points.GetLength(0) - 1; i++)
@@ -206,15 +204,15 @@ namespace Poligon
                 Point A = new Point(polygon.points[i, 0], polygon.points[i, 1]);
                 Point B = new Point(polygon.points[i + 1, 0], polygon.points[i + 1, 1]);
                 Point C = new Point(polygon.points[i + 2, 0], polygon.points[i + 2, 1]);
-                double AB_vector = Math.Sqrt(Math.Pow(A.X - B.X, 2) + Math.Pow(A.Y - B.Y, 2));
-                double CB_vector = Math.Sqrt(Math.Pow(C.X - B.X, 2) + Math.Pow(C.Y - B.Y, 2));
-                double Cos_alfa = ((B.X - A.X) * (B.X - C.X) + (B.Y - A.Y) * (B.Y - C.Y)) / (AB_vector * CB_vector);
-                double alfa = Math.Acos(Cos_alfa);
-                double angle_straights = alfa * (180 / Math.PI);
-                sum += angle_straights;
+                double ABVector = Math.Sqrt(Math.Pow(A.X - B.X, 2) + Math.Pow(A.Y - B.Y, 2));
+                double CBVector = Math.Sqrt(Math.Pow(C.X - B.X, 2) + Math.Pow(C.Y - B.Y, 2));
+                double cosAlfa = ((B.X - A.X) * (B.X - C.X) + (B.Y - A.Y) * (B.Y - C.Y)) / (ABVector * CBVector);
+                double alfa = Math.Acos(cosAlfa);
+                double angleStraights = alfa * (180 / Math.PI);
+                sum += angleStraights;
             }
 
-            if (sum == (180 * (points_count - 2))) return true;
+            if (sum == (180 * (pointsCount - 2))) return true;
             else return false;
         }
         // перегрузка
